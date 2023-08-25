@@ -1,0 +1,219 @@
+openapi: 3.0.1
+info:
+  title: Labs Service
+  description: Labs Service
+  version: v1
+
+paths:
+  /patients/labs:
+    post:
+      tags:
+        - Labs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LabsDto"
+      security: []
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabsDto"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+        "422":
+          $ref: "#/components/responses/UnAcceptableInputs"
+  /patients/labs/get:
+    get:
+      tags:
+        - Labs
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabsDto"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+        "422":
+          $ref: "#/components/responses/UnAcceptableInputs"
+  /patients/labs/getAll:
+    get:
+      tags:
+        - Labs
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabsPagedResultDto"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+  /patients/labs/delete:
+    delete:
+      tags:
+        - Labs
+      parameters:
+        - $ref: "#/components/parameters/idParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/Success"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+        "422":
+          $ref: "#/components/responses/UnAcceptableInputs"
+  /patients/labs/update:
+    put:
+      tags:
+        - Labs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LabsDto"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LabsDto"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/ResourceNotFoundError"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    idParam:
+      name: Id
+      in: query
+      required: true
+      schema:
+        type: string
+    limitParam:
+      name: Limit
+      in: query
+      schema:
+        type: integer
+        nullable: true
+    directionParam:
+      name: Direction
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
+    sortByFieldParam:
+      name: SortByField
+      in: query
+      schema:
+        type: string
+        nullable: true
+  responses:
+    Success:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageDto"
+    ResourceNotFoundError:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageDto"
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageDto"
+    UnAcceptableInputs:
+      description: Invalid Inputs
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/MessageDto"
+  schemas:
+    MessageDto:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    LabsPagedResultDto:
+      type: object
+      properties:
+        totalCount:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/LabsDto"
+    LabsDto:
+      type: object
+      properties:
+        resourceType:
+          type: string
+        id:
+          type: string
+        status:
+          type: string
+        category: 
+          type: string
+        patientName:
+          type: string
+        patientId:
+          type: string
+        effectiveDateTime:
+          type: string
+        issued:
+          type: string
+        performer:
+          type: string
+        result:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              resourceType:
+                type: string
+              status:
+                type: string
+              id:
+                type: string
+              category:
+                type: string
+              effectiveDateTime:
+                type: string
+              valueQuantity:
+                type: number
+              unit:
+                type: string
+security:
+  - bearerAuth: []
